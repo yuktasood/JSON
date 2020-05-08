@@ -1,0 +1,38 @@
+[
+    {
+      "course_icon": "java",
+      "name": "Advanced Java",
+      "duration": "4 Weeks",
+      "fee": "1900",
+      "category": "IT"
+    },
+    {
+      "course_icon": "Adnroid",
+      "name": "Adnroid",
+      "duration": "3 Weeks",
+      "fee": "1900",
+      "category": "IT"
+    },
+    {
+      "course_icon": "iOS",
+      "name": "iOS Training",
+      "duration": "2 Weeks",
+      "fee": "9000",
+      "category": "IT"
+    },
+    {
+      "course_icon": "Python",
+      "name": "Data-scientist",
+      "duration": "8 Weeks",
+      "fee": "190000",
+      "category": "IT"
+    },
+    {
+      "course_icon": "DS",
+      "name": "Data-Structure",
+      "duration": "9 Weeks",
+      "fee": "100000",
+      "category": "IT"
+    }
+]
+
