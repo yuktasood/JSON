@@ -52,11 +52,14 @@ private class ListRowHolder(row: View?) {
     public val course_duration_tv: TextView
     public val course_fee_tv: TextView
     public val course_fategory_tv: TextView
+    public val linearLayout: LinearLayout
 
     init {
         this.course_name_tv = row?.findViewById<TextView>(R.id.course_name_tv) as TextView
         this.course_duration_tv = row?.findViewById<TextView>(R.id.course_duration_tv) as TextView
         this.course_fee_tv = row?.findViewById<TextView>(R.id.course_fee_tv) as TextView
         this.course_fategory_tv= row?.findViewById<TextView>(R.id.course_category_tv) as TextView
+        this.linearLayout = row?.findViewById<LinearLayout>(R.id.linearLayout) as LinearLayout
+
     }
 }
