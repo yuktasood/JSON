@@ -1,7 +1,10 @@
 package com.example.jsondemo
 
+import android.app.ProgressDialog
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
+import android.widget.Adapter
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.ProgressBar
@@ -13,78 +16,70 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
-        lateinit var listView_details: ListView
-    var arrayList_details:ArrayList<Model> = ArrayList();
-    //OkHttpClient creates connection pool between client and server
-    val client = OkHttpClient()
+    lateinit var pDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-               listView_details = findViewById<ListView>(R.id.json_listView) as ListView
-        run("https://api.jsonbin.io/b/5eb8e22f47a2266b14766ec0")
+
+        val url = "https://api.jsonbin.io/b/5eb8e22f47a2266b14766ec0"
+        AsyncTaskHandler().execute(url)
     }
-    fun run(url: String){
-        val request= Request.Builder()
-            .url(url)
-            .build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-            }
-            override fun onResponse(call: Call, response: Response) {
-                var str_response = response.body()!!.string()
-                //creating json object
-                val json_contact:JSONObject = JSONObject(str_response)
-                //creating json array
-                var jsonarray_info:JSONArray= json_contact.getJSONArray("info")
-                var i:Int = 0
-                var size:Int = jsonarray_info.length()
-                arrayList_details= ArrayList();
-                for (i in 0.. size-1) {
-                    var json_objectdetail:JSONObject=jsonarray_info.getJSONObject(i)
-                    var model:Model= Model();
-                    model.name=json_objectdetail.getString("name")
-                    model.duration=json_objectdetail.getString("duration")
-                    model.fee=json_objectdetail.getString("fee")
-                    model.fategory=json_objectdetail.getString("category")
+    inner class AsyncTaskHandler: AsyncTask<String,String,String>(){
+        override fun onPreExecute() {
+            super.onPreExecute()
+            pDialog= ProgressDialog(this@MainActivity)
+            pDialog.setMessage("PLEASE WAIT")
+            pDialog.setCancelable(false)
+            pDialog.show()
+        }
 
-                    arrayList_details.add(model)
-                }
-                runOnUiThread {
-                    //stuff that updates ui
-                    val obj_adapter : CustomAdapter
-                    obj_adapter = CustomAdapter(applicationContext,arrayList_details)
-                    listView_details.adapter=obj_adapter
-                }
+        override fun doInBackground(vararg url: String?): String {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            val res: String
+            val connection = URL(url[0]).openConnection() as HttpURLConnection
+            try {
+                connection.connect()
+                res = connection.inputStream.use { it.reader().use { reader-> reader.readText() } }
             }
+            finally {
+                connection.disconnect()
+            }
+            return res
+        }
 
-        })
-}}
-//    fun read_json(){
-//        var json: String? = null
-//        try {
-//            val inputStream: InputStream = assets.open("course.json")
-//            json= inputStream.bufferedReader().use { it.readText()}
-//
-//            var jsonarr= JSONArray(json)
-//            for (i in 0..jsonarr.length()-1){
-//                var jsonObj = jsonarr.getJSONObject(i)
-//                var model:Model= Model();
-//                model.name=jsonObj.getString("name")
-//                model.duration=jsonObj.getString("duration")
-//                model.fee=jsonObj.getString("fee")
-//                model.fategory=jsonObj.getString("fategoty")
-//
-//                arrayList_details.add(model)
-//
-//            }
-//            val obj_adapter : CustomAdapter
-//            obj_adapter = CustomAdapter(applicationContext,arrayList_details)
-//            listView_details.adapter=obj_adapter
-//        }
-//        catch (e: IOException){
-//
-//        }
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            if (pDialog.isShowing())
+                pDialog.dismiss()
+            jsonResult(result)
+
+        }
+        private fun jsonResult(jsonString: String?){
+            val jsonArray = JSONArray(jsonString)
+            val list = ArrayList<Model>()
+            var i = 0
+            while (i<jsonArray.length())
+            {
+                val jsonObject = jsonArray.getJSONObject(i)
+                list.add(
+                    Model(
+                    jsonObject.getString("name"),
+                    jsonObject.getString("duration"),
+                        jsonObject.getString("fee"),
+                        jsonObject.getString("fategory")
+
+                )
+                )
+                i++
+            }
+            val adapter= CustomAdapter(this@MainActivity, list)
+            json_listView.adapter= adapter
+        }
+    }
+    }

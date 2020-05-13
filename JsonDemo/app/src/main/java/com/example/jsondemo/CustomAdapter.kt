@@ -9,57 +9,35 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
-class CustomAdapter(context: Context,arrayListDetails:ArrayList<Model>) : BaseAdapter() {
-    private val layoutInflater: LayoutInflater
-    private val arrayListDetails:ArrayList<Model>
+class CustomAdapter(val context: Context,val list:ArrayList<Model>) : BaseAdapter() {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
-    init {
-        this.layoutInflater = LayoutInflater.from(context)
-        this.arrayListDetails=arrayListDetails
+        val view: View= LayoutInflater.from(context).inflate(R.layout.row,parent, false)
+        val name= view.findViewById<TextView>(R.id.course_name_tv)
+        val duration = view.findViewById<TextView>(R.id.course_duration_tv)
+        val fee= view.findViewById<TextView>(R.id.course_fee_tv)
+        val category= view.findViewById<TextView>(R.id.course_category_tv)
+
+        name.text = list[position].name.toString()
+        duration.text= list[position].duration.toString()
+        fee.text= list[position].fee.toString()
+        category.text= list[position].fategory.toString()
+        return view
     }
 
     override fun getItem(position: Int): Any {
-        return arrayListDetails.get(position)
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return position
     }
 
     override fun getItemId(position: Int): Long {
-        return position.toLong()      }
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return position.toLong()
+    }
 
     override fun getCount(): Int {
-        return arrayListDetails.size
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return list.size
     }
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
-        val view: View?
-        val listRowHolder: ListRowHolder
-        if (convertView == null) {
-            view = this.layoutInflater.inflate(R.layout.row, parent, false)
-            listRowHolder = ListRowHolder(view)
-            view.tag = listRowHolder
-        } else {
-            view = convertView
-            listRowHolder = view.tag as ListRowHolder
-        }
-        listRowHolder.course_name_tv.text = arrayListDetails.get(position).name
-        listRowHolder.course_duration_tv.text = arrayListDetails.get(position).duration
-        listRowHolder.course_fee_tv.text = arrayListDetails.get(position).fee
-        listRowHolder.course_fategory_tv.text = arrayListDetails.get(position).fategory
-        return view
-    }
-}
 
-private class ListRowHolder(row: View?) {
-    public val course_name_tv: TextView
-    public val course_duration_tv: TextView
-    public val course_fee_tv: TextView
-    public val course_fategory_tv: TextView
-    public val linearLayout: LinearLayout
-
-    init {
-        this.course_name_tv = row?.findViewById<TextView>(R.id.course_name_tv) as TextView
-        this.course_duration_tv = row?.findViewById<TextView>(R.id.course_duration_tv) as TextView
-        this.course_fee_tv = row?.findViewById<TextView>(R.id.course_fee_tv) as TextView
-        this.course_fategory_tv= row?.findViewById<TextView>(R.id.course_category_tv) as TextView
-        this.linearLayout = row?.findViewById<LinearLayout>(R.id.linearLayout) as LinearLayout
-
-    }
 }
